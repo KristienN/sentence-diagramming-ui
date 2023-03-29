@@ -32,10 +32,29 @@ let model: modelObject = {
 
 const Draw = () => {
   const [svgselect, setSvgselect] = useState<null | Selection<null, unknown, null, undefined>>(null);
-  const [lines, setLines] = useState(initialLines);
+  const [lines, setLines] = useState<lineObject[]>();
   const [selected, setSelected] = useState<string | null>(null);
   const [sentence, setSentence] = useState<string | null>(null);
   const svgRef = useRef(null);
+
+  useEffect(() => {
+    const linesCache: lineObject[] | null = getLinesFromCache();
+    const sentenceCache = getSentenceFromCache();
+
+    if (!linesCache) {
+      console.log('linesCache: ' + linesCache);
+      setLines([]);
+    } else {
+      console.log('linesCache: ' + linesCache);
+      setLines(linesCache);
+    }
+
+    if (sentenceCache === null) {
+      setSentence(null);
+    } else {
+      setSentence(sentenceCache);
+    }
+  }, []);
 
   useEffect(() => {
     let modifier_x = {
@@ -76,24 +95,24 @@ const Draw = () => {
       console.log(svgselect);
       console.log(lines);
 
-      lines.forEach(l => {
+      lines!.forEach(l => {
         drawLines(svgselect, l, selected, setSelected, model, modifier_x);
       });
     }
 
-    console.log(model);
+    console.log(lines);
   }, [lines, svgselect, selected]);
 
   const addLine = (type: string) => {
-    if (lines.filter(l => l.type === type).length > 0 && type !== 'modifier' && type !== 'preposition') {
+    if (lines!.filter(l => l.type === type).length > 0 && type !== 'modifier' && type !== 'preposition') {
       return;
     }
 
-    if (type === 'object' && lines.filter(l => l.type === 'object_2').length > 0) {
+    if (type === 'object' && lines!.filter(l => l.type === 'object_2').length > 0) {
       return;
     }
 
-    if (type === 'object_2' && lines.filter(l => l.type === 'object').length > 0) {
+    if (type === 'object_2' && lines!.filter(l => l.type === 'object').length > 0) {
       return;
     }
 
@@ -104,7 +123,7 @@ const Draw = () => {
     };
 
     if (type === 'modifier') {
-      if (selected === null || lines.filter(l => l.parent === selected).length === 2) {
+      if (selected === null || lines!.filter(l => l.parent === selected).length === 2) {
         return;
       } else {
         lineToAdd.parent = selected;
@@ -112,22 +131,23 @@ const Draw = () => {
     }
 
     if (type === 'preposition') {
-      if (selected === null || lines.filter(l => l.parent === selected).length === 2) {
+      if (selected === null || lines!.filter(l => l.parent === selected).length === 2) {
         return;
       } else {
         lineToAdd.parent = selected;
       }
     }
 
-    setLines([...lines, lineToAdd]);
+    saveLinesToCache([...lines!, lineToAdd]);
+    setLines([...lines!, lineToAdd]);
   };
 
   const undoDraw = () => {
-    if (lines.length === 0) {
+    if (lines!.length === 0) {
       return;
     }
-    lastDrawn = [...lastDrawn, lines[lines.length - 1]];
-    const slicedLines = lines.slice(0, lines.length - 1);
+    lastDrawn = [...lastDrawn, lines![lines!.length - 1]];
+    const slicedLines = lines!.slice(0, lines!.length - 1);
     setLines(slicedLines);
   };
 
@@ -136,7 +156,7 @@ const Draw = () => {
       return;
     }
 
-    setLines([...lines, lastDrawn[lastDrawn.length - 1]]);
+    setLines([...lines!, lastDrawn[lastDrawn.length - 1]]);
     lastDrawn = lastDrawn.slice(0, lastDrawn.length - 1);
   };
 
@@ -147,11 +167,13 @@ const Draw = () => {
   const getSentence = (data: string) => {
     console.log('Data is here...' + data);
     setSentence(data);
+    saveSentenceToCache(data);
   };
 
   const removeSentence = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setSentence(null);
+    saveSentenceToCache(null);
   };
 
   const downloadJSON = () => {
@@ -174,6 +196,37 @@ const Draw = () => {
       link.click();
       URL.revokeObjectURL(url);
     }
+  };
+
+  const setDefaultLines = () => {
+    const defaultLines: lineObject[] = []; // default value
+    sessionStorage.setItem('lines', JSON.stringify(defaultLines));
+  };
+
+  const saveLinesToCache = (lines: lineObject[]): void => {
+    console.log('I saved!');
+    sessionStorage.setItem('lines', JSON.stringify(lines));
+  };
+
+  const getLinesFromCache = (): lineObject[] | null => {
+    const cachedModel = sessionStorage.getItem('lines');
+    console.log('cachedModel:', cachedModel);
+    if (typeof cachedModel === 'string' && cachedModel !== null) {
+      return JSON.parse(cachedModel);
+    }
+    return null;
+  };
+
+  const saveSentenceToCache = (sentence: string | null): void => {
+    sessionStorage.setItem('sentence', JSON.stringify(sentence));
+  };
+
+  const getSentenceFromCache = (): string | null => {
+    const cachedModel = sessionStorage.getItem('sentence');
+    if (cachedModel) {
+      return JSON.parse(cachedModel);
+    }
+    return null;
   };
 
   return (

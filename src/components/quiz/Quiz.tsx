@@ -54,7 +54,7 @@ export type TestingData = {
 
 let initialLines: lineObject[] = [];
 let lastDrawn: lineObject[] = [];
-let canvasDrawings: canvasObject[];
+let canvasDrawings: canvasObject[] | null;
 let index = 0;
 
 let model: modelObject = {
@@ -83,21 +83,14 @@ const Quiz = () => {
 
   useEffect(() => {
     getRequestforState(setTestData, 'simple');
+    canvasDrawings = getCanvasFromCache();
 
-    // const previousCanvasData = sessionStorage.getItem('canvas-drawings') ? sessionStorage.getItem('canvas-drawings') : null;
-
-    // if (previousCanvasData !== undefined && previousCanvasData !== null && previousCanvasData !== 'undefined') {
-    //   canvasDrawings = JSON.parse(previousCanvasData!) as canvasObject[];
-    // }
-
-    // console.log(canvasDrawings);
-
-    // if (canvasDrawings !== null || canvasDrawings !== undefined) {
-    //   setLines(canvasDrawings[index].linesArr);
-    // } else {
-    // }
-
-    canvasDrawings = [];
+    if (!canvasDrawings) {
+      console.log('none');
+      canvasDrawings = [];
+    } else {
+      setLines(canvasDrawings![index].linesArr);
+    }
   }, []);
 
   useEffect(() => {
@@ -140,11 +133,9 @@ const Quiz = () => {
       });
     }
 
-    console.log(lines);
+    console.log(canvasDrawings);
     compare();
-
-    sessionStorage.setItem('model', JSON.stringify(model));
-    sessionStorage.setItem('canvas-drawings', JSON.stringify(canvasDrawings));
+    saveCanvasToCache(canvasDrawings!);
   }, [lines, svgselect, selected, drawScore]);
 
   const addLine = (type: string) => {
@@ -216,15 +207,15 @@ const Quiz = () => {
         score: drawScore,
       };
 
-      canvasDrawings[index] = c;
+      canvasDrawings![index] = c;
 
       index++;
-      if (canvasDrawings[index] === undefined || canvasDrawings[index] === null) {
+      if (canvasDrawings![index] === undefined || canvasDrawings![index] === null) {
         lastDrawn = [];
         setLines([]);
       } else {
-        setLines(canvasDrawings[index].linesArr);
-        lastDrawn = canvasDrawings[index].lastDrawn;
+        setLines(canvasDrawings![index].linesArr);
+        lastDrawn = canvasDrawings![index].lastDrawn;
       }
       // console.log(canvasDrawings);
     }
@@ -237,7 +228,7 @@ const Quiz = () => {
   const prevDraw = () => {
     if (index >= 0) {
       if (testData !== undefined && testData !== null) {
-        if (canvasDrawings.length === 0) {
+        if (canvasDrawings!.length === 0) {
           return;
         }
         let c: canvasObject = {
@@ -247,12 +238,12 @@ const Quiz = () => {
           score: drawScore,
         };
 
-        canvasDrawings[index] = c;
+        canvasDrawings![index] = c;
 
         index--;
-        setLines(canvasDrawings[index].linesArr);
-        lastDrawn = canvasDrawings[index].lastDrawn;
-        setDrawScore(canvasDrawings[index].score);
+        setLines(canvasDrawings![index].linesArr);
+        lastDrawn = canvasDrawings![index].lastDrawn;
+        setDrawScore(canvasDrawings![index].score);
         // console.log(canvasDrawings);
       }
     }
@@ -344,7 +335,7 @@ const Quiz = () => {
   const finish = () => {
     //  Send score to database
     let total: number = 0;
-    canvasDrawings.forEach(c => {
+    canvasDrawings!.forEach(c => {
       if (c.score) {
         total += c.score;
       }
@@ -368,6 +359,18 @@ const Quiz = () => {
   // if (testData === undefined || null) {
   //   return <></>;
   // }
+
+  const saveCanvasToCache = (canvasArr: canvasObject[]): void => {
+    sessionStorage.setItem('canvas', JSON.stringify(canvasArr));
+  };
+
+  const getCanvasFromCache = (): canvasObject[] | null => {
+    const cachedModel = sessionStorage.getItem('canvas');
+    if (cachedModel) {
+      return JSON.parse(cachedModel);
+    }
+    return null;
+  };
 
   return (
     <>
