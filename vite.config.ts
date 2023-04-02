@@ -5,6 +5,6 @@ import svgrPlugin from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "sentence-diagramming-ui",
+  base: "/sentence-diagramming-ui/",
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
 });

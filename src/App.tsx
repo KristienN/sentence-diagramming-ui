@@ -11,7 +11,7 @@ function App() {
   return (
       <div className="select-none">
         <Navbar />
-        <BrowserRouter>
+        <BrowserRouter basename='sentence-diagramming-ui'>
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="quiz" element={<Quiz />} />
