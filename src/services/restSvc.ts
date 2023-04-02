@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { SetStateAction } from 'react';
-const url = 'http://localhost:8080/api/';
+const url = 'https://sentence-diagramming-server-docker.onrender.com/api/';
 
 export const getRequestforState = (setState: SetStateAction<any | null>, endpoint: string) => {
   let data: any;
