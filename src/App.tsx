@@ -10,14 +10,14 @@ import ThankYou from './components/thankyou/ThankYou';
 function App() {
   return (
       <div className="select-none">
+        <BrowserRouter>
         <Navbar />
-        <BrowserRouter basename='sentence-diagramming-ui'>
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="quiz" element={<Quiz />} />
-            <Route path="learn" element={<Learn />} />
-            <Route path="draw" element={<Draw />} />
-            <Route path="thank" element={<ThankYou />} />
+            <Route path="/" Component={Landing} />
+            <Route path="/quiz" Component={Quiz} />
+            <Route path="/learn" Component={Learn} />
+            <Route path="/draw" Component={Draw} />
+            <Route path="/thank" Component={ThankYou} />
           </Routes>
         </BrowserRouter>
       </div>

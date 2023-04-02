@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 type navInfo = {
   name: string;
@@ -7,9 +8,11 @@ type navInfo = {
 
 const NavbarItem = ({ name, href }: navInfo) => {
   return (
-    <a className="hover:text-gray-400 block px-5 hover:cursor-pointer" href={href}>
-      {name}
-    </a>
+    <Link to={href}>
+      <a className="hover:text-gray-400 block px-5 hover:cursor-pointer">
+        {name}
+      </a>
+    </Link>
   );
 };
 
