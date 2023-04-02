@@ -10,10 +10,8 @@ const Navbar = () => {
 
       <div className="container mx-auto flex items-center justify-between">
         <div className="pt-2">
-          <Link to="/">
-          <a className="text-3xl italic text-left">
+          <Link to="/" className="text-3xl italic text-left">
             Sentence Diagramming Tool
-          </a>
           </Link>
         </div>
         <div className="hidden md:flex space-x-4 items center pt-2">
@@ -22,9 +20,8 @@ const Navbar = () => {
           <NavbarItem name="Quizzes" href="" />
           <NavbarItem name="Test" href="/quiz" />
         </div>
-        <Link to={"/learn"}><a className="border border-black text-xl px-6 py-2 md:visible invisible" href="/learn">
+        <Link to={"/learn"} className="border border-black text-xl px-6 py-2 md:visible invisible">
           Learn
-        </a>
         </Link>
         <Bars3Icon className="h-8 w-8 hover:text-gray-400 hover:cursor-pointer md:hidden" />
       </div>

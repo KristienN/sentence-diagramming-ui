@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Landing = () => {
   return (
@@ -125,20 +126,22 @@ const Landing = () => {
         </div>
 
         <div data-cy="landing-buttons" className="flex flex-col space-y-6 items-center justify-center w-1/2">
-          <a className="bg-gray-100 border border-black text-xl text-center px-6 py-2 w-1/5" href="/learn">
+          <Link to="/learn" className="border border-black text-xl text-center px-6 py-2 w-1/5">
             Learn
+          </Link>
 
-          </a>
-          <a className="text-xl text-center border border-black px-6 py-2 w-1/5" href="/draw">
+          <Link to="/draw" className="text-xl text-center border border-black px-6 py-2 w-1/5">
             Draw
-          </a>
+          </Link>
 
-          <a className="text-xl text-center border border-black px-6 py-2 w-1/5" href="/quiz">
+          <Link to="/quiz" className="text-xl text-center border border-black px-6 py-2 w-1/5">
             Test
-          </a>
-          <a className="text-xl border text-center border-black px-6 py-2 w-1/5" href="/">
+          </Link>
+
+          <Link to="/" className="text-xl border text-center border-black px-6 py-2 w-1/5">
             Quiz
-          </a>
+          </Link>
+          
         </div>
       </div>
     </>
