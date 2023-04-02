@@ -83,14 +83,18 @@ const Quiz = () => {
 
   useEffect(() => {
     getRequestforState(setTestData, 'simple');
-    canvasDrawings = getCanvasFromCache();
+    // canvasDrawings = getCanvasFromCache();
 
-    if (!canvasDrawings) {
-      console.log('none');
-      canvasDrawings = [];
-    } else {
-      setLines(canvasDrawings![index].linesArr);
-    }
+    // if (!canvasDrawings) {
+    //   canvasDrawings = [];
+    // } else {
+    //   if (!canvasDrawings![index].linesArr || canvasDrawings![index].linesArr === undefined) {
+    //     canvasDrawings = [];
+    //   } else {
+    //     setLines(canvasDrawings![index].linesArr);
+    //   }
+    // }
+    canvasDrawings = [];
   }, []);
 
   useEffect(() => {
@@ -342,6 +346,7 @@ const Quiz = () => {
     });
 
     total = total / testData!.length;
+    total = Math.floor(total);
 
     console.log('Total Grade: ' + total);
 
@@ -366,8 +371,8 @@ const Quiz = () => {
 
   const getCanvasFromCache = (): canvasObject[] | null => {
     const cachedModel = sessionStorage.getItem('canvas');
-    if (cachedModel) {
-      return JSON.parse(cachedModel);
+    if (cachedModel !== null || cachedModel !== undefined) {
+      return JSON.parse(cachedModel!);
     }
     return null;
   };

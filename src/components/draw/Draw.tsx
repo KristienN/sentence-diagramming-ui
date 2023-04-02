@@ -210,7 +210,6 @@ const Draw = () => {
 
   const getLinesFromCache = (): lineObject[] | null => {
     const cachedModel = sessionStorage.getItem('lines');
-    console.log('cachedModel:', cachedModel);
     if (typeof cachedModel === 'string' && cachedModel !== null) {
       return JSON.parse(cachedModel);
     }
